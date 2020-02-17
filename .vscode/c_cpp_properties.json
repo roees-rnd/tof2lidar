@@ -1,0 +1,26 @@
+{
+    "configurations": [
+        {
+            "browse": {
+                "databaseFilename": "",
+                "limitSymbolsToIncludedHeaders": true
+            },
+            "includePath": [
+                "/home/roees/catkin_ws/devel/include/**",
+                "/opt/ros/kinetic/include/**",
+                "/home/roees/catkin_ws/src/crazyflie_ros/crazyflie_cpp/include/**",
+                "/home/roees/catkin_ws/src/hector_slam/hector_geotiff/include/**",
+                "/home/roees/catkin_ws/src/hector_slam/hector_map_tools/include/**",
+                "/home/roees/catkin_ws/src/hector_slam/hector_mapping/include/**",
+                "/home/roees/catkin_ws/src/hector_slam/hector_marker_drawing/include/**",
+                "/usr/include/**"
+            ],
+            "name": "ROS",
+            "intelliSenseMode": "gcc-x64",
+            "compilerPath": "/usr/bin/clang",
+            "cStandard": "c11",
+            "cppStandard": "c++17"
+        }
+    ],
+    "version": 4
+}
