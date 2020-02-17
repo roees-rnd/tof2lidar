@@ -28,7 +28,6 @@ void chatterCallback(const LaserScan::ConstPtr &msg)
     msg_new.header.stamp.nsec = msg->header.stamp.nsec;
     msg_new.header.stamp.sec = msg->header.stamp.sec;
     msg_new.ranges.assign(numRaysLS, 0);
-    srand (time(NULL));
 
     for (int i = 0; i < 16; i++)
     {
@@ -95,6 +94,7 @@ int main(int argc, char **argv)
     msg_new.ranges = ranges;
     std::vector<float_t> intensities(numRaysLS, 0);
     msg_new.intensities = intensities;
+    srand (time(NULL));
 
     int i_tmp = 0;
     for (int i = 0; i < 16; i++)
