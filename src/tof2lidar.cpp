@@ -1,5 +1,6 @@
 #include <stdio.h>
 #include <stdlib.h> /* srand, rand */
+#include <time.h>       /* time */
 
 #include "ros/ros.h"
 #include <ros/console.h>
@@ -7,9 +8,9 @@
 using namespace sensor_msgs;
 
 #define DELTA_ANG_PER_RAY_DEG 1
-#define TOF_HALF_FOV_DEG 7
+#define TOF_HALF_FOV_DEG 10
 #define DEG2RAD 0.017453293
-//#define NOISE_PER_DIST_METER 0.2
+#define NOISE_PER_DIST_METER 0.2
 
 int32_t numRaysLS;
 float_t angInc;
@@ -27,6 +28,7 @@ void chatterCallback(const LaserScan::ConstPtr &msg)
     msg_new.header.stamp.nsec = msg->header.stamp.nsec;
     msg_new.header.stamp.sec = msg->header.stamp.sec;
     msg_new.ranges.assign(numRaysLS, 0);
+    srand (time(NULL));
 
     for (int i = 0; i < 16; i++)
     {
@@ -34,7 +36,7 @@ void chatterCallback(const LaserScan::ConstPtr &msg)
         while (true)
         {
             tmp_ind_wrap = tmp_ind >= 0 ? tmp_ind : tmp_ind + numRaysLS;
-            msg_new.ranges[tmp_ind_wrap] = msg->ranges[i]; // add noise
+            msg_new.ranges[tmp_ind_wrap] = msg->ranges[i] + (float)(msg->ranges[i])*NOISE_PER_DIST_METER*(float)rand()/RAND_MAX; // add noise
             if (tmp_ind == stop_inds[i])
             {
                 break;
@@ -47,7 +49,7 @@ void chatterCallback(const LaserScan::ConstPtr &msg)
 }
 
 void load_params(ros::NodeHandle& n, int32_t& delta_ang_per_ray_deg, float& tof_half_fov_deg){
-    if (n.param("delta_ang_per_ray_deg", delta_ang_per_ray_deg, 1))
+    if (n.param("delta_ang_per_ray_deg", delta_ang_per_ray_deg, (int32_t)DELTA_ANG_PER_RAY_DEG))
     {
         ROS_INFO("GOT PARAM: delta ang per ray = %d", delta_ang_per_ray_deg);
     }
@@ -56,7 +58,7 @@ void load_params(ros::NodeHandle& n, int32_t& delta_ang_per_ray_deg, float& tof_
         ROS_INFO("NO  PARAM: delta ang per ray = %d", DELTA_ANG_PER_RAY_DEG);
     }
 
-    if (n.param("tof_half_fov_deg", tof_half_fov_deg, (float)1))
+    if (n.param("tof_half_fov_deg", tof_half_fov_deg, (float)TOF_HALF_FOV_DEG))
     {
         ROS_INFO("GOT PARAM: tof_half_fov_deg = %f", tof_half_fov_deg);
     }
@@ -77,7 +79,7 @@ int main(int argc, char **argv)
     int32_t delta_ang_per_ray_deg;
     float tof_half_fov_deg;
     load_params(n, delta_ang_per_ray_deg, tof_half_fov_deg);
-
+    
     numRaysLS = (int)(360.0 / ((float)delta_ang_per_ray_deg));
     angInc = 360.0 / (float_t)(numRaysLS);
 
