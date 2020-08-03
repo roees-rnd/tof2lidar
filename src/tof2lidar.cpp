@@ -48,7 +48,14 @@ public:
     float tof_half_fov_deg;
     float noise_per_dist_meter;
     float max_range;
-};
+    std::string frame_out;
+    bool flipped;
+}prm;
+
+int32_t rev_ind(int32_t index)
+{
+    return prm.flipped?numRaysLS-index-(int32_t)1:index;
+}
 
 void chatterCallback(const LaserScan::ConstPtr &msg)
 {
@@ -67,14 +74,14 @@ void chatterCallback(const LaserScan::ConstPtr &msg)
         {
             tmp_ind_wrap = tmp_ind >= 0 ? tmp_ind : tmp_ind + numRaysLS;
             if (msg->ranges[i]<=*max_range_ptr){
-            msg_new.ranges[tmp_ind_wrap] = msg->ranges[i];
+            msg_new.ranges[rev_ind(tmp_ind_wrap)] = msg->ranges[i];
 #ifdef USE_NORM_DIST
-            msg_new.ranges[tmp_ind_wrap] += (float)(msg->ranges[i]) * (*noise_per_dist_meter_ptr) * gauss();
+            msg_new.ranges[rev_ind(tmp_ind_wrap)] += (float)(msg->ranges[i]) * (*noise_per_dist_meter_ptr) * gauss();
 #elif
-            msg_new.ranges[tmp_ind_wrap] += (float)(msg->ranges[i]) * (*noise_per_dist_meter_ptr) * (float)rand() / RAND_MAX;
+            msg_new.ranges[rev_ind(tmp_ind_wrap)] += (float)(msg->ranges[i]) * (*noise_per_dist_meter_ptr) * (float)rand() / RAND_MAX;
 #endif
             }else{
-                msg_new.ranges[tmp_ind_wrap]=0;
+                msg_new.ranges[rev_ind(tmp_ind_wrap)]=0;
             }
             if (tmp_ind == stop_inds[i])
             {
@@ -83,6 +90,7 @@ void chatterCallback(const LaserScan::ConstPtr &msg)
             tmp_ind++;
         }
     }
+    //std::reverse(msg_new.ranges.begin(),msg_new.ranges.end());
     pubPntr->publish(msg_new);
     return;
 }
@@ -96,7 +104,7 @@ int main(int argc, char **argv)
 
     LaserScan msg = LaserScan();
 
-    my_params prm;
+    // my_params prm;
     noise_per_dist_meter_ptr = &prm.noise_per_dist_meter;
     max_range_ptr = &prm.max_range;
     load_params(n, prm);
@@ -107,7 +115,7 @@ int main(int argc, char **argv)
     msg_new.angle_increment = angInc * DEG2RAD;
     msg_new.angle_min = 0;
     msg_new.angle_max = (numRaysLS - 1) * angInc * DEG2RAD;
-    msg_new.header.frame_id = "mr18_frame";
+    msg_new.header.frame_id = prm.frame_out;
     msg_new.range_max = 4.0;
     msg_new.range_min = 0.01;
     msg_new.scan_time = 0.0;
@@ -195,5 +203,23 @@ void load_params(ros::NodeHandle &n, my_params& prm)
     else
     {
         ROS_INFO("NO  PARAM: max_range = %f", (float)MAX_RANGE);
+    }
+
+    if (n.param<std::string>("frame_out", prm.frame_out, (std::string)"mr18_frame"))
+    {
+        ROS_INFO("GOT PARAM: frame_out = %s", prm.frame_out.c_str());
+    }
+    else
+    {
+        ROS_INFO("NO  PARAM: frame_out = %s", "mr18_frame");
+    }
+
+    if (n.param<bool>("flipped", prm.flipped, false))
+    {
+        ROS_INFO("GOT PARAM: flipped = %s", prm.flipped?"true":"false");
+    }
+    else
+    {
+        ROS_INFO("NO  PARAM: flipped = \"false\"");
     }
 }
