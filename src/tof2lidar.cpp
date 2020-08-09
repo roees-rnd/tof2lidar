@@ -101,13 +101,21 @@ int main(int argc, char **argv)
 {
     ros::init(argc, argv, "tof2lidar_node");
     ros::NodeHandle n;
+    std::string s;
 
     LaserScan msg = LaserScan();
 
+    ROS_WARN("node name=%s",ros::this_node::getName().c_str());
+    ROS_WARN("node namespace=%s",ros::this_node::getNamespace().c_str());
+    
+    // std::cout << "---------------- nh.name=" << s.c_str() << std::endl;
     // my_params prm;
     noise_per_dist_meter_ptr = &prm.noise_per_dist_meter;
     max_range_ptr = &prm.max_range;
     load_params(n, prm);
+
+
+    
 
     numRaysLS = (int)(360.0 / ((float)prm.delta_ang_per_ray_deg));
     angInc = 360.0 / (float_t)(numRaysLS);
@@ -169,7 +177,7 @@ int main(int argc, char **argv)
 
 void load_params(ros::NodeHandle &n, my_params& prm)
 {
-    if (n.param("delta_ang_per_ray_deg", prm.delta_ang_per_ray_deg, (float)DELTA_ANG_PER_RAY_DEG))
+    if (n.param("tof2lidar/delta_ang_per_ray_deg", prm.delta_ang_per_ray_deg, (float)DELTA_ANG_PER_RAY_DEG))
     {
         ROS_INFO("GOT PARAM: delta ang per ray = %f", prm.delta_ang_per_ray_deg);
     }
@@ -178,7 +186,7 @@ void load_params(ros::NodeHandle &n, my_params& prm)
         ROS_INFO("NO  PARAM: delta ang per ray = %f", (float)DELTA_ANG_PER_RAY_DEG);
     }
 
-    if (n.param("tof_half_fov_deg", prm.tof_half_fov_deg, (float)TOF_HALF_FOV_DEG))
+    if (n.param("tof2lidar/tof_half_fov_deg", prm.tof_half_fov_deg, (float)TOF_HALF_FOV_DEG))
     {
         ROS_INFO("GOT PARAM: tof_half_fov_deg = %f", prm.tof_half_fov_deg);
     }
@@ -187,7 +195,7 @@ void load_params(ros::NodeHandle &n, my_params& prm)
         ROS_INFO("NO  PARAM: tof_half_fov_deg = %f", (float)TOF_HALF_FOV_DEG);
     }
 
-    if (n.param("noise_per_dist_meter", prm.noise_per_dist_meter, (float)NOISE_PER_DIST_METER))
+    if (n.param("tof2lidar/noise_per_dist_meter", prm.noise_per_dist_meter, (float)NOISE_PER_DIST_METER))
     {
         ROS_INFO("GOT PARAM: noise_per_dist_meter = %f", prm.noise_per_dist_meter);
     }
@@ -196,7 +204,7 @@ void load_params(ros::NodeHandle &n, my_params& prm)
         ROS_INFO("NO  PARAM: noise_per_dist_meter = %f", (float)NOISE_PER_DIST_METER);
     }
 
-    if (n.param("max_range", prm.max_range, (float)MAX_RANGE))
+    if (n.param("tof2lidar/max_range", prm.max_range, (float)MAX_RANGE))
     {
         ROS_INFO("GOT PARAM: max_range = %f", prm.max_range);
     }
@@ -205,7 +213,7 @@ void load_params(ros::NodeHandle &n, my_params& prm)
         ROS_INFO("NO  PARAM: max_range = %f", (float)MAX_RANGE);
     }
 
-    if (n.param<std::string>("frame_out", prm.frame_out, (std::string)"mr18_frame"))
+    if (n.param<std::string>("tof2lidar/frame_out", prm.frame_out, (std::string)"mr18_frame"))
     {
         ROS_INFO("GOT PARAM: frame_out = %s", prm.frame_out.c_str());
     }
@@ -214,7 +222,7 @@ void load_params(ros::NodeHandle &n, my_params& prm)
         ROS_INFO("NO  PARAM: frame_out = %s", "mr18_frame");
     }
 
-    if (n.param<bool>("flipped", prm.flipped, false))
+    if (n.param<bool>("tof2lidar/flipped", prm.flipped, false))
     {
         ROS_INFO("GOT PARAM: flipped = %s", prm.flipped?"true":"false");
     }
