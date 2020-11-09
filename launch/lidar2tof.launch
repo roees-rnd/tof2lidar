@@ -1,0 +1,7 @@
+<?xml version="1.0"?>
+<launch>
+    <rosparam file="$(find tof2lidar)/config_lidar2tof.yaml" command="load" ns="lidar2tof" />
+    <node pkg="tof2lidar" type="lidar2tof" name="lidar2tof_node" output="screen">
+        <remap from="mr18" to="RP_scan"/>
+    </node>
+</launch>

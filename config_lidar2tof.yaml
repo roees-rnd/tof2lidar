@@ -1,0 +1,6 @@
+delta_ang_per_ray_deg: 0.5  # dAng in lidar
+tof_half_fov_deg: 10  # 0.5 fov of single mr beam
+noise_per_dist_meter: 0.02  # additive noise (after averaging) 
+max_range: 3.5
+frame_out: mr18_frame
+flipped: false

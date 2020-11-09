@@ -1,0 +1,6 @@
+delta_ang_per_ray_deg: 0.5
+tof_half_fov_deg: 5
+noise_per_dist_meter: 0.0
+max_range: 2.5
+frame_out: mr18_frame
+flipped: false

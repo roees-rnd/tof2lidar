@@ -203,7 +203,11 @@ include_directories(
 
 ## Add folders to be run by python nosetests
 # catkin_add_nosetests(test)
-message(STATUS " : ROEE : This is a test" ...)
+# message(STATUS " : ROEE : This is a test" ...)
 
 add_executable(tof2lidar src/tof2lidar.cpp)
 target_link_libraries(tof2lidar ${catkin_LIBRARIES})
+
+add_executable(lidar2tof src/lidar2tof.cpp)
+target_link_libraries(lidar2tof ${catkin_LIBRARIES})
+
